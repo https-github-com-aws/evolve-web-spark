@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { 
@@ -21,6 +20,27 @@ const Index = () => {
       {/* Hero Section */}
       <section className="relative h-screen flex items-center justify-center bg-gradient-to-br from-primary-light via-white to-primary-light/20 overflow-hidden">
         <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+        {[...Array(3)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-72 h-72 bg-primary/5 rounded-full"
+            animate={{
+              x: [0, 100, 0],
+              y: [0, -100, 0],
+              scale: [1, 1.2, 1],
+            }}
+            transition={{
+              duration: 15,
+              repeat: Infinity,
+              delay: i * 2,
+              ease: "linear"
+            }}
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+            }}
+          />
+        ))}
         <div className="container mx-auto px-4 text-center relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -28,13 +48,18 @@ const Index = () => {
             transition={{ duration: 0.8 }}
             className="space-y-8"
           >
-            <span className="inline-block px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-semibold mb-4">
+            <motion.span
+              initial={{ scale: 0.5, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="inline-block px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-semibold mb-4"
+            >
               Welcome to EvolveIndex Agency
-            </span>
+            </motion.span>
             <h1 className="text-4xl md:text-7xl font-bold text-gray-900 leading-tight">
               Evolve Your Digital Presence
               <br />
-              <span className="text-primary bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-dark">
+              <span className="gradient-text">
                 With Innovation
               </span>
             </h1>
@@ -43,12 +68,17 @@ const Index = () => {
               we've got your brand covered.
             </p>
             <div className="flex items-center justify-center gap-4 pt-4">
-              <Button
-                className="px-8 py-6 bg-primary hover:bg-primary-dark text-white rounded-full text-lg font-semibold transition-all duration-300 hover:shadow-xl"
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                Get Started
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
+                <Button
+                  className="px-8 py-6 bg-primary hover:bg-primary-dark text-white rounded-full text-lg font-semibold transition-all duration-300 hover:shadow-xl hover-glow"
+                >
+                  Get Started
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </motion.div>
               <Button
                 variant="outline"
                 className="px-8 py-6 border-2 border-primary text-primary hover:bg-primary hover:text-white rounded-full text-lg font-semibold transition-all duration-300"
@@ -86,15 +116,34 @@ const Index = () => {
                 key={service.title}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
+                whileHover={{ 
+                  y: -10,
+                  transition: { duration: 0.2 }
+                }}
                 transition={{ delay: index * 0.2 }}
                 viewport={{ once: true }}
-                className="glass-card p-8 hover-scale"
+                className="glass-card p-8 hover-scale group"
               >
-                <service.icon className="w-12 h-12 text-primary mb-6" />
+                <motion.div
+                  animate={{ rotate: [0, 360] }}
+                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                  className="w-12 h-12 mx-auto mb-6 text-primary group-hover:text-primary-dark transition-colors"
+                >
+                  <service.icon className="w-full h-full" />
+                </motion.div>
                 <h3 className="text-xl font-semibold mb-4">{service.title}</h3>
                 <p className="text-gray-600 mb-6">{service.description}</p>
-                <Button variant="link" className="text-primary p-0 hover:text-primary-dark">
-                  Learn More <ArrowRight className="ml-2 h-4 w-4" />
+                <Button 
+                  variant="link" 
+                  className="text-primary p-0 hover:text-primary-dark group"
+                >
+                  Learn More 
+                  <motion.span
+                    animate={{ x: [0, 5, 0] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                  >
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </motion.span>
                 </Button>
               </motion.div>
             ))}
@@ -102,7 +151,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Why Choose Us Section */}
+      {/* Stats Section */}
       <section className="section-padding bg-white">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -141,12 +190,25 @@ const Index = () => {
               className="grid grid-cols-2 gap-6"
             >
               {stats.map((stat, index) => (
-                <div key={index} className="glass-card p-6 text-center">
-                  <h3 className="text-3xl md:text-4xl font-bold text-primary mb-2">
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.3 }}
+                  viewport={{ once: true }}
+                  className="glass-card p-6 text-center hover-glow"
+                >
+                  <motion.h3
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                    className="text-3xl md:text-4xl font-bold text-primary mb-2"
+                  >
                     {stat.value}
-                  </h3>
+                  </motion.h3>
                   <p className="text-gray-600">{stat.label}</p>
-                </div>
+                </motion.div>
               ))}
             </motion.div>
           </div>
@@ -184,7 +246,17 @@ const Index = () => {
 
       {/* Contact Section */}
       <section className="section-padding bg-primary relative overflow-hidden">
-        <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
+        <motion.div
+          animate={{
+            backgroundPosition: ['0% 0%', '100% 100%'],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            repeatType: "reverse",
+          }}
+          className="absolute inset-0 bg-grid-pattern opacity-10"
+        />
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-5xl mx-auto">
             <div className="text-center text-white mb-16">

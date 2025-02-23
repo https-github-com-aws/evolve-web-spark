@@ -38,7 +38,16 @@
   }
 
   .glass-card {
-    @apply bg-white/80 backdrop-blur-md border border-white/20 rounded-xl shadow-lg;
+    @apply bg-white/80 backdrop-blur-md border border-white/20 rounded-xl shadow-lg relative overflow-hidden;
+  }
+
+  .glass-card::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 transition-opacity duration-300;
+  }
+
+  .glass-card:hover::before {
+    @apply opacity-100;
   }
 
   .section-padding {
@@ -46,12 +55,41 @@
   }
 
   .hover-scale {
-    @apply transition-transform duration-300 hover:scale-105;
+    @apply transition-all duration-300 hover:scale-105 hover:shadow-xl;
   }
 
   .bg-grid-pattern {
     background-image: linear-gradient(to right, rgba(155, 135, 245, 0.1) 1px, transparent 1px),
                       linear-gradient(to bottom, rgba(155, 135, 245, 0.1) 1px, transparent 1px);
     background-size: 24px 24px;
+  }
+
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary-dark to-primary;
+    background-size: 200% 100%;
+    animation: gradient-shift 8s infinite linear;
+  }
+
+  @keyframes gradient-shift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .floating-animation {
+    animation: floating 3s ease-in-out infinite;
+  }
+
+  @keyframes floating {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+  }
+
+  .hover-glow {
+    @apply transition-all duration-300;
+  }
+
+  .hover-glow:hover {
+    box-shadow: 0 0 20px theme('colors.primary.DEFAULT');
   }
 }
