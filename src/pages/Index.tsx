@@ -1,5 +1,5 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useState } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { 
   ArrowRight, 
   Globe, 
@@ -10,17 +10,59 @@ import {
   Phone, 
   MapPin, 
   CheckCircle2,
-  ArrowUpRight 
+  ArrowUpRight,
+  ChevronUp 
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 
 const Index = () => {
+  const { scrollYProgress } = useScroll();
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 20;
+      const y = (e.clientY / window.innerHeight - 0.5) * 20;
+      setMousePosition({ x, y });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
+  const servicesY = useTransform(scrollYProgress, [0.1, 0.3], [100, 0]);
+  const statsScale = useTransform(scrollYProgress, [0.3, 0.5], [0.8, 1]);
+
   return (
-    <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center bg-gradient-to-br from-primary-light via-white to-primary-light/20 overflow-hidden">
-        <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
-        {[...Array(3)].map((_, i) => (
+    <div className="min-h-screen relative">
+      <div className="fixed inset-0 bg-gradient-to-br from-primary-light via-white to-primary-light/20 opacity-50" />
+      <div className="fixed inset-0 bg-noise" />
+
+      <motion.div
+        className="fixed top-0 left-0 right-0 h-1 bg-primary origin-left z-50"
+        style={{ scaleX: scrollYProgress }}
+      />
+
+      <motion.button
+        className="scroll-indicator"
+        onClick={scrollToTop}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: scrollYProgress.get() > 0.2 ? 1 : 0 }}
+      >
+        <ChevronUp className="w-6 h-6 text-primary" />
+      </motion.button>
+
+      <motion.section 
+        className="relative h-screen flex items-center justify-center overflow-hidden"
+        style={{ opacity: heroOpacity }}
+      >
+        <div className="absolute inset-0 bg-grid-pattern opacity-5" />
+        {[...Array(5)].map((_, i) => (
           <motion.div
             key={i}
             className="absolute w-72 h-72 bg-primary/5 rounded-full"
@@ -28,9 +70,10 @@ const Index = () => {
               x: [0, 100, 0],
               y: [0, -100, 0],
               scale: [1, 1.2, 1],
+              rotate: [0, 180, 360],
             }}
             transition={{
-              duration: 15,
+              duration: 15 + i * 2,
               repeat: Infinity,
               delay: i * 2,
               ease: "linear"
@@ -89,12 +132,19 @@ const Index = () => {
             </div>
           </motion.div>
         </div>
-      </section>
+      </motion.section>
 
-      {/* Services Section */}
-      <section className="section-padding bg-secondary-light relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-white/80 to-transparent"></div>
-        <div className="container mx-auto px-4 relative z-10">
+      <motion.section 
+        className="section-padding relative overflow-hidden"
+        style={{ y: servicesY }}
+      >
+        <motion.div
+          className="container mx-auto px-4"
+          style={{
+            x: mousePosition.x,
+            y: mousePosition.y,
+          }}
+        >
           <div className="text-center mb-16">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -148,11 +198,13 @@ const Index = () => {
               </motion.div>
             ))}
           </div>
-        </div>
-      </section>
+        </motion.div>
+      </motion.section>
 
-      {/* Stats Section */}
-      <section className="section-padding bg-white">
+      <motion.section 
+        className="section-padding bg-white relative"
+        style={{ scale: statsScale }}
+      >
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <motion.div
@@ -213,9 +265,8 @@ const Index = () => {
             </motion.div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
-      {/* About Section */}
       <section className="section-padding bg-gradient-to-br from-primary-light/20 to-white">
         <div className="container mx-auto px-4">
           <motion.div
@@ -244,7 +295,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Contact Section */}
       <section className="section-padding bg-primary relative overflow-hidden">
         <motion.div
           animate={{

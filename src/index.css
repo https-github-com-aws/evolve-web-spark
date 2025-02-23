@@ -30,7 +30,7 @@
   }
 
   * {
-    @apply border-border;
+    @apply border-border selection:bg-primary/20 selection:text-primary;
   }
 
   body {
@@ -91,5 +91,66 @@
 
   .hover-glow:hover {
     box-shadow: 0 0 20px theme('colors.primary.DEFAULT');
+  }
+
+  .scroll-indicator {
+    @apply fixed bottom-8 right-8 z-50 w-12 h-12 flex items-center justify-center rounded-full bg-white/80 backdrop-blur-md border border-white/20 shadow-lg cursor-pointer transition-all duration-300 hover:scale-110;
+  }
+
+  .parallax-bg {
+    @apply fixed inset-0 pointer-events-none;
+    background-size: 200% 200%;
+    animation: gradientBG 15s ease infinite;
+  }
+
+  @keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .text-glow {
+    text-shadow: 0 0 10px theme('colors.primary.DEFAULT');
+  }
+
+  .card-hover-effect {
+    @apply relative overflow-hidden;
+  }
+
+  .card-hover-effect::after {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-r from-primary/20 to-transparent opacity-0 transition-opacity duration-300;
+  }
+
+  .card-hover-effect:hover::after {
+    @apply opacity-100;
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+  }
+
+  .mouse-parallax {
+    @apply transition-transform duration-200 ease-out;
+    transform: perspective(1000px);
+  }
+
+  .marquee-effect {
+    animation: marquee 20s linear infinite;
+  }
+
+  @keyframes marquee {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+  }
+
+  .bg-noise {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.05;
   }
 }
