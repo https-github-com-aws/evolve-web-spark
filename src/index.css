@@ -1,4 +1,3 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 @tailwind base;
@@ -39,6 +38,8 @@
 
   .glass-card {
     @apply bg-white/80 backdrop-blur-md border border-white/20 rounded-xl shadow-lg relative overflow-hidden;
+    transform-style: preserve-3d;
+    perspective: 1000px;
   }
 
   .glass-card::before {
@@ -48,6 +49,11 @@
 
   .glass-card:hover::before {
     @apply opacity-100;
+  }
+
+  .glass-card:hover {
+    transform: translateY(-5px) rotateX(5deg) rotateY(5deg);
+    transition: transform 0.3s ease;
   }
 
   .section-padding {
@@ -81,8 +87,8 @@
   }
 
   @keyframes floating {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-20px); }
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(2deg); }
   }
 
   .hover-glow {
@@ -90,7 +96,7 @@
   }
 
   .hover-glow:hover {
-    box-shadow: 0 0 20px theme('colors.primary.DEFAULT');
+    box-shadow: 0 0 30px theme('colors.primary.DEFAULT');
   }
 
   .scroll-indicator {
@@ -110,7 +116,21 @@
   }
 
   .text-glow {
-    text-shadow: 0 0 10px theme('colors.primary.DEFAULT');
+    text-shadow: 0 0 20px theme('colors.primary.DEFAULT');
+    animation: textGlow 2s ease-in-out infinite;
+  }
+
+  @keyframes textGlow {
+    0%, 100% { text-shadow: 0 0 20px theme('colors.primary.DEFAULT'); }
+    50% { text-shadow: 0 0 40px theme('colors.primary.DEFAULT'); }
+  }
+
+  .magnetic-button {
+    transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .magnetic-button:hover {
+    transform: translate(var(--mx, 0), var(--my, 0));
   }
 
   .card-hover-effect {

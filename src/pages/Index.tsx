@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import React, { useEffect, useState, useRef } from 'react';
+import { motion, useScroll, useTransform, useSpring, useMotionValue } from 'framer-motion';
 import { 
   ArrowRight, 
   Globe, 
@@ -17,12 +17,20 @@ import { Button } from "@/components/ui/button";
 
 const Index = () => {
   const { scrollYProgress } = useScroll();
+  const springScrollProgress = useSpring(scrollYProgress);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const cursorRef = useRef<HTMLDivElement>(null);
+  const cursorX = useMotionValue(-100);
+  const cursorY = useMotionValue(-100);
   
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      const x = (e.clientX / window.innerWidth - 0.5) * 20;
-      const y = (e.clientY / window.innerHeight - 0.5) * 20;
+    const handleMouseMove = (event: MouseEvent) => {
+      const { clientX, clientY } = event;
+      cursorX.set(clientX - 16);
+      cursorY.set(clientY - 16);
+      
+      const x = (clientX / window.innerWidth - 0.5) * 20;
+      const y = (clientY / window.innerHeight - 0.5) * 20;
       setMousePosition({ x, y });
     };
 
@@ -35,17 +43,33 @@ const Index = () => {
   };
 
   const heroOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
+  const heroScale = useTransform(scrollYProgress, [0, 0.2], [1, 0.8]);
   const servicesY = useTransform(scrollYProgress, [0.1, 0.3], [100, 0]);
   const statsScale = useTransform(scrollYProgress, [0.3, 0.5], [0.8, 1]);
+  const bgRotate = useTransform(scrollYProgress, [0, 1], [0, 360]);
 
   return (
     <div className="min-h-screen relative">
-      <div className="fixed inset-0 bg-gradient-to-br from-primary-light via-white to-primary-light/20 opacity-50" />
+      <motion.div
+        ref={cursorRef}
+        className="fixed w-8 h-8 pointer-events-none z-50 mix-blend-difference"
+        style={{
+          x: cursorX,
+          y: cursorY,
+        }}
+      >
+        <div className="w-full h-full bg-white rounded-full transform scale-75 opacity-50" />
+      </motion.div>
+
+      <motion.div 
+        className="fixed inset-0 bg-gradient-to-br from-primary-light via-white to-primary-light/20 opacity-50"
+        style={{ rotate: bgRotate }}
+      />
       <div className="fixed inset-0 bg-noise" />
 
       <motion.div
         className="fixed top-0 left-0 right-0 h-1 bg-primary origin-left z-50"
-        style={{ scaleX: scrollYProgress }}
+        style={{ scaleX: springScrollProgress }}
       />
 
       <motion.button
@@ -53,19 +77,25 @@ const Index = () => {
         onClick={scrollToTop}
         initial={{ opacity: 0 }}
         animate={{ opacity: scrollYProgress.get() > 0.2 ? 1 : 0 }}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
       >
         <ChevronUp className="w-6 h-6 text-primary" />
       </motion.button>
 
       <motion.section 
         className="relative h-screen flex items-center justify-center overflow-hidden"
-        style={{ opacity: heroOpacity }}
+        style={{ 
+          opacity: heroOpacity,
+          scale: heroScale
+        }}
       >
         <div className="absolute inset-0 bg-grid-pattern opacity-5" />
-        {[...Array(5)].map((_, i) => (
+        
+        {[...Array(8)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-72 h-72 bg-primary/5 rounded-full"
+            className="absolute w-72 h-72 bg-primary/5 rounded-full backdrop-blur-3xl"
             animate={{
               x: [0, 100, 0],
               y: [0, -100, 0],
@@ -84,6 +114,7 @@ const Index = () => {
             }}
           />
         ))}
+
         <div className="container mx-auto px-4 text-center relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -95,41 +126,72 @@ const Index = () => {
               initial={{ scale: 0.5, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.5 }}
-              className="inline-block px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-semibold mb-4"
+              className="inline-block px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-semibold mb-4 backdrop-blur-md"
             >
               Welcome to EvolveIndex Agency
             </motion.span>
             <h1 className="text-4xl md:text-7xl font-bold text-gray-900 leading-tight">
               Evolve Your Digital Presence
               <br />
-              <span className="gradient-text">
+              <motion.span 
+                className="gradient-text inline-block"
+                animate={{
+                  backgroundPosition: ['200% 0%', '0% 0%', '200% 0%'],
+                }}
+                transition={{
+                  duration: 20,
+                  repeat: Infinity,
+                  ease: "linear"
+                }}
+              >
                 With Innovation
-              </span>
+              </motion.span>
             </h1>
-            <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.7 }}
+              className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto"
+            >
               From Digital Marketing to Web Development, Graphic Design, and SEO,
               we've got your brand covered.
-            </p>
-            <div className="flex items-center justify-center gap-4 pt-4">
+            </motion.p>
+            <motion.div 
+              className="flex items-center justify-center gap-4 pt-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.9 }}
+            >
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
                 <Button
-                  className="px-8 py-6 bg-primary hover:bg-primary-dark text-white rounded-full text-lg font-semibold transition-all duration-300 hover:shadow-xl hover-glow"
+                  className="px-8 py-6 bg-primary hover:bg-primary-dark text-white rounded-full text-lg font-semibold transition-all duration-300 hover:shadow-xl hover-glow relative overflow-hidden group"
                 >
-                  Get Started
-                  <ArrowRight className="ml-2 h-5 w-5" />
+                  <span className="relative z-10">Get Started</span>
+                  <motion.div
+                    className="absolute inset-0 bg-primary-dark"
+                    initial={{ x: "100%" }}
+                    whileHover={{ x: 0 }}
+                    transition={{ duration: 0.3 }}
+                  />
+                  <ArrowRight className="ml-2 h-5 w-5 relative z-10" />
                 </Button>
               </motion.div>
               <Button
                 variant="outline"
-                className="px-8 py-6 border-2 border-primary text-primary hover:bg-primary hover:text-white rounded-full text-lg font-semibold transition-all duration-300"
+                className="px-8 py-6 border-2 border-primary text-primary hover:bg-primary hover:text-white rounded-full text-lg font-semibold transition-all duration-300 group"
               >
                 Learn More
-                <ArrowUpRight className="ml-2 h-5 w-5" />
+                <motion.span
+                  animate={{ x: [0, 5, 0] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                >
+                  <ArrowUpRight className="ml-2 h-5 w-5" />
+                </motion.span>
               </Button>
-            </div>
+            </motion.div>
           </motion.div>
         </div>
       </motion.section>
@@ -202,7 +264,7 @@ const Index = () => {
       </motion.section>
 
       <motion.section 
-        className="section-padding bg-white relative"
+        className="section-padding bg-white/80 backdrop-blur-lg relative"
         style={{ scale: statsScale }}
       >
         <div className="container mx-auto px-4">
