@@ -48,4 +48,10 @@
   .hover-scale {
     @apply transition-transform duration-300 hover:scale-105;
   }
+
+  .bg-grid-pattern {
+    background-image: linear-gradient(to right, rgba(155, 135, 245, 0.1) 1px, transparent 1px),
+                      linear-gradient(to bottom, rgba(155, 135, 245, 0.1) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
 }
